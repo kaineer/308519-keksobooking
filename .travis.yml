@@ -5,3 +5,4 @@ node_js:
 
 notifications:
   email: false
+  slack: orange-cloud:ALBuaposU8pJxrPc7V7b4AQ8
