@@ -1,7 +1,7 @@
 'use strict';
 
 function random(x, y) {
-  if (y + '' === 'undefined') {
+  if (typeof (y) === 'undefined') {
     return Math.floor((Math.random() * x));
   } else {
     return Math.floor((Math.random() * (y - x + 1)) + x);
