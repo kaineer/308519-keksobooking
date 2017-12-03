@@ -46,7 +46,7 @@ for (var i = 0; i < 8; i++) {
       'avatar': 'img/avatars/user' + avatarValues.splice(random(avatarValues.length - 1), 1) + '.png'
     },
     'offer': {
-      'title': titleValues.splice(random(titleValues.length), 1),
+      'title': titleValues.splice(random(titleValues.length - 1), 1),
       'address': locationX + ', ' + locationY,
       'price': random(1000, 1000000),
       'type': typeValues[random(2)],
@@ -94,72 +94,55 @@ document.querySelector('.map__pins').appendChild(fragment);
 
 function advertAssembling(advertElement, advertNumber) {
 
-  advertElement.querySelector('h3').textContent = adverts[advertNumber].offer.title;
-  advertElement.querySelector('.popup__price').innerHTML = adverts[advertNumber].offer.price + '&#x20bd;/ночь';
+  advertElement.querySelector('h3').textContent = advertNumber.offer.title;
+  advertElement.querySelector('.popup__price').innerHTML = advertNumber.offer.price + '&#x20bd;/ночь';
 
-  // switch (adverts[0].offer.type) {
-  //   case 'flat':
-  //     advertElement.querySelector('h4').textContent = 'Квартира';
-  //     break;
-  //   case 'house':
-  //     advertElement.querySelector('h4').textContent = 'Дом';
-  //     break;
-  //   case 'bungalo':
-  //     advertElement.querySelector('h4').textContent = 'Бунгало';
-  //     break;
-  // }
 
-  function advertTitles(advertValue) {
-    switch (advertValue) {
-      case 'flat':
-        return 'Квартира';
-      case 'house':
-        return 'Дом';
-      case 'bungalo':
-        return 'Бунгало';
-    }
-    return 'чево чево';
-  }
+  var advertTitles = {
+    flat: 'Квартира',
+    house: 'Дом',
+    bungalo: 'Бунгало'
+  };
 
-  advertElement.querySelector('h4').textContent = advertTitles(adverts[advertNumber].offer.type);
+  advertElement.querySelector('h4').textContent = advertTitles[advertNumber.offer.type];
 
   var form = ' комнаты ';
-  if (adverts[advertNumber].offer.rooms === 1) {
+  if (advertNumber.offer.rooms === 1) {
     form = ' комната ';
   }
-  if (adverts[advertNumber].offer.rooms === 5) {
+  if (advertNumber.offer.rooms === 5) {
     form = ' комнат ';
   }
 
-  if (adverts[advertNumber].offer.guests > 1) {
-    advertElement.querySelectorAll('p')[2].textContent = adverts[advertNumber].offer.rooms + form + ' для ' + adverts[advertNumber].offer.guests + ' гостей';
+  if (advertNumber.offer.guests > 1) {
+    advertElement.querySelectorAll('p')[2].textContent = advertNumber.offer.rooms + form + ' для ' + advertNumber.offer.guests + ' гостей';
   } else {
-    advertElement.querySelectorAll('p')[2].textContent = adverts[advertNumber].offer.rooms + form + ' для ' + adverts[advertNumber].offer.guests + ' гостя';
+    advertElement.querySelectorAll('p')[2].textContent = advertNumber.offer.rooms + form + ' для ' + advertNumber.offer.guests + ' гостя';
   }
 
-  advertElement.querySelectorAll('p')[3].textContent = 'Заезд после ' + adverts[advertNumber].offer.checkin + ' выезд до ' + adverts[advertNumber].offer.checkout;
+  advertElement.querySelectorAll('p')[3].textContent = 'Заезд после ' + advertNumber.offer.checkin + ' выезд до ' + advertNumber.offer.checkout;
 
   var flag;
   var j;
   for (i = 0; i < featuresValues.length; i++) {
     flag = false;
     j = 0;
-    while (!flag && j < adverts[advertNumber].offer.features.length) {
-      if (adverts[advertNumber].offer.features[j] === featuresValues[i]) {
+    while (!flag && j < advertNumber.offer.features.length) {
+      if (advertNumber.offer.features[j] === featuresValues[i]) {
         flag = true;
       }
       j++;
     }
     if (!flag) {
       var featuresListAll = advertElement.querySelectorAll('.popup__features');
-      featuresListAll[advertNumber].removeChild(advertElement.querySelector('.feature--' + featuresValues[i]));
+      featuresListAll[0].removeChild(advertElement.querySelector('.feature--' + featuresValues[i]));
     }
   }
 
-  advertElement.querySelectorAll('p')[4].textContent = adverts[advertNumber].offer.description;
-  advertElement.querySelector('.popup__avatar').src = adverts[advertNumber].author.avatar;
+  advertElement.querySelectorAll('p')[4].textContent = advertNumber.offer.description;
+  advertElement.querySelector('.popup__avatar').src = advertNumber.author.avatar;
 
   return advertElement;
 }
 
-document.querySelector('.map').insertBefore(advertAssembling(document.querySelector('template').content.cloneNode(true), 0), document.querySelector('.map__filters-container'));
+document.querySelector('.map').insertBefore(advertAssembling(document.querySelector('template').content.cloneNode(true), adverts[0]), document.querySelector('.map__filters-container'));
