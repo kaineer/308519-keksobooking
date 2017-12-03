@@ -1,7 +1,11 @@
 'use strict';
 
-function random(x) {
-  return Math.floor((Math.random() * x));
+function random(x, y) {
+  if (y + '' === 'undefined') {
+    return Math.floor((Math.random() * x));
+  } else {
+    return Math.floor((Math.random() * (y - x + 1)) + x);
+  }
 }
 
 var avatarValues = ['01', '02', '03', '04', '05', '06', '07', '08'];
@@ -19,26 +23,32 @@ var featuresValues = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'co
 
 function featuresList() {
   var list = [];
-  var a = Math.floor((Math.random() * 1000000));
-  a = a + '';
-  for (var i = 0; i < (a).length; i++) {
-    if (a[i] > '4') {
+  var randomFeatures = random(64);
+  for (var i = 0; i < 6; i++) {
+    if (randomFeatures % 2) {
+      randomFeatures = (randomFeatures - 1) / 2;
       list.push(featuresValues[i]);
+    } else {
+      randomFeatures = randomFeatures / 2;
     }
   }
   return list;
 }
 
 var adverts = [];
+var locationX;
+var locationY;
 for (var i = 0; i < 8; i++) {
+  locationX = random(300, 900);
+  locationY = random(100, 500);
   adverts[i] = {
     'author': {
       'avatar': 'img/avatars/user' + avatarValues.splice(random(avatarValues.length), 1) + '.png'
     },
     'offer': {
       'title': titleValues.splice(random(titleValues.length), 1),
-      'address': '{{location.x}}, {{location.y}}',
-      'price': random(999000) + 1000,
+      'address': locationX + ', ' + locationY,
+      'price': random(1000, 1000000),
       'type': typeValues[random(2)],
       'rooms': random(4) + 1,
       'guests': random(10) + 1,
@@ -48,8 +58,8 @@ for (var i = 0; i < 8; i++) {
       'description': '',
       'photos': [],
       'location': {
-        'x': random(600) + 300,
-        'y': random(400) + 100
+        'x': locationX,
+        'y': locationY
       }
     }
   };
@@ -57,41 +67,44 @@ for (var i = 0; i < 8; i++) {
 
 document.querySelector('.map').classList.remove('map--faded');
 
-var similarListElement = document.querySelector('.map__pins');
+var OFFSET_X = 20;
+var OFFSET_Y = 58;
+
 var similarLabelTemplate = document.querySelector('template').content.querySelector('.map__pin');
 
 var renderAdvert = function (advert) {
   var advertLabel = similarLabelTemplate.cloneNode(true);
-  advertLabel.style.left = advert.offer.location.x - 20 + 'px';
-  advertLabel.style.top = advert.offer.location.y - 58 + 'px';
-  advertLabel.querySelector('img').src = advert.author.avatar;
-  advertLabel.querySelector('img').width = '40';
-  advertLabel.querySelector('img').height = '40';
-  advertLabel.querySelector('img').draggable = 'false';
+  advertLabel.style.left = advert.offer.location.x - OFFSET_X + 'px';
+  advertLabel.style.top = advert.offer.location.y - OFFSET_Y + 'px';
+  var advertLabelImage = advertLabel.querySelector('img');
+  advertLabelImage.src = advert.author.avatar;
+  advertLabelImage.width = '40';
+  advertLabelImage.height = '40';
+  advertLabelImage.draggable = 'false';
   return advertLabel;
 };
 
 var fragment = document.createDocumentFragment();
 for (i = 0; i < adverts.length; i++) {
-  var rrr = renderAdvert(adverts[i]);
-
-  fragment.appendChild(rrr);
+  fragment.appendChild(renderAdvert(adverts[i]));
 }
-similarListElement.appendChild(fragment);
 
-var similarAdvertTemplate = document.querySelector('template').content;
+document.querySelector('.map__pins').appendChild(fragment);
 
-var advertElement = similarAdvertTemplate.cloneNode(true);
+var advertElement = document.querySelector('template').content.cloneNode(true);
 
 advertElement.querySelector('h3').textContent = adverts[0].offer.title;
 advertElement.querySelector('.popup__price').innerHTML = adverts[0].offer.price + '&#x20bd;/ночь';
 
 switch (adverts[0].offer.type) {
-  case 'flat': advertElement.querySelector('h4').textContent = 'Квартира';
+  case 'flat':
+    advertElement.querySelector('h4').textContent = 'Квартира';
     break;
-  case 'house': advertElement.querySelector('h4').textContent = 'Дом';
+  case 'house':
+    advertElement.querySelector('h4').textContent = 'Дом';
     break;
-  case 'bungalo': advertElement.querySelector('h4').textContent = 'Бунгало';
+  case 'bungalo':
+    advertElement.querySelector('h4').textContent = 'Бунгало';
     break;
 }
 
