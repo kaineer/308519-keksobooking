@@ -135,7 +135,7 @@ function renderAdvert(advertElement, advert) {
 
   renderFeatures(offer.features, advertElement.querySelector('.popup__features'));
 
-  advertElement.querySelector('.popup__avatar').src = author.avatar;
+  advertElement.querySelector('.popup__avatar').src = advert.author.avatar;
 
   return advertElement;
 }
@@ -164,13 +164,15 @@ var initPopup = function () {
 var disableFieldsets = function () {
   // делаем неактивными поля для заполнения объявления
   var fieldset = document.querySelectorAll('fieldset');
-  for (i = 0; i < fieldset.length; i++) {
+  for (var i = 0; i < fieldset.length; i++) {
     fieldset[i].disabled = true;
   }
 };
 
 // ======================что делает клик по КРАСНОЙ метке
 document.querySelector('.map__pin--main').addEventListener('click', function () {
+  var i;
+
   var OFFSET_X = 20;
   var OFFSET_Y = 58;
   // убираем затемнение
