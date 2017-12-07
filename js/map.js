@@ -91,9 +91,11 @@ var generateAdvert = function () {
 
 var adverts = [];
 
-for (var i = 0; i < 8; i++) {
-  adverts.push(generateAdvert());
-}
+var generateAdverts = function () {
+  for (var i = 0; i < 8; i++) {
+    adverts.push(generateAdvert());
+  }
+};
 
 var renderFeatures = function (features, element) {
   var featuresFragment = document.createDocumentFragment();
@@ -139,7 +141,6 @@ function renderAdvert(advertElement, advert) {
 }
 
 // ================>>>>>>
-document.querySelector('.map').insertBefore(document.querySelector('template').content.querySelector('article').cloneNode(true), document.querySelector('.map__filters-container'));
 // закрытие карточки объявления
 function closePopup() {
   document.querySelector('.popup').classList.add('hidden');
@@ -168,7 +169,7 @@ document.querySelector('.map__pin--main').addEventListener('click', function () 
   document.querySelector('.map').classList.remove('map--faded');
   // и рисуем пины
   var similarLabelTemplate = document.querySelector('template').content.querySelector('.map__pin');
-  var renderAdvert = function (advert) {
+  var renderPin = function (advert) {
     var advertLabel = similarLabelTemplate.cloneNode(true);
     advertLabel.style.left = advert.offer.location.x - OFFSET_X + 'px';
     advertLabel.style.top = advert.offer.location.y - OFFSET_Y + 'px';
@@ -182,7 +183,7 @@ document.querySelector('.map__pin--main').addEventListener('click', function () 
 
   var fragment = document.createDocumentFragment();
   for (i = 0; i < adverts.length; i++) {
-    var advertLabel = fragment.appendChild(renderAdvert(adverts[i]));
+    var advertLabel = fragment.appendChild(renderPin(adverts[i]));
     advertLabel.value = i;
     advertLabel.setAttribute('tabindex', 0);
     advertLabel.addEventListener('click', function () {
@@ -209,3 +210,9 @@ document.querySelector('.map__pin--main').addEventListener('click', function () 
 
 }); // конец =========== что делает клик по КРАСНОЙ метке
 
+var initMap = function () {
+  generateAdverts();
+
+};
+
+initMap();
