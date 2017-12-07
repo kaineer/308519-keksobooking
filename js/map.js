@@ -43,31 +43,38 @@ var generateLocation = function () {
   };
 };
 
-var adverts = [];
-var location;
+var generateAuthor = function () {
+  return {
+    avatar: 'img/avatars/user' + avatarValues.splice(random(avatarValues.length - 1), 1) + '.png'
+  };
+};
 
-for (var i = 0; i < 8; i++) {
-  location = generateLocation();
+var generateAdvert = function () {
+  var loc = generateLocation();
 
-  adverts[i] = {
-    'author': {
-      'avatar': 'img/avatars/user' + avatarValues.splice(random(avatarValues.length - 1), 1) + '.png'
-    },
-    'offer': {
-      'title': titleValues.splice(random(titleValues.length - 1), 1),
-      'address': location.x + ', ' + location.y,
-      'price': random(1000, 1000000),
-      'type': typeValues[random(2)],
-      'rooms': random(4) + 1,
-      'guests': random(10) + 1,
-      'checkin': checkValues[random(2)],
-      'checkout': checkValues[random(2)],
-      'features': featuresList(),
-      'description': '',
-      'photos': [],
-      'location': location
+  return {
+    author: generateAuthor(),
+    offer: {
+      title: titleValues.splice(random(titleValues.length - 1), 1),
+      address: loc.x + ', ' + loc.y,
+      price: random(1000, 1000000),
+      type: typeValues[random(2)],
+      rooms: random(4) + 1,
+      guests: random(10) + 1,
+      checkin: checkValues[random(2)],
+      checkout: checkValues[random(2)],
+      features: featuresList(),
+      description: '',
+      photos: [],
+      location: loc
     }
   };
+};
+
+var adverts = [];
+
+for (var i = 0; i < 8; i++) {
+  adverts.push(generateAdvert());
 }
 
 // заполнение карточки объявления ==================================================
