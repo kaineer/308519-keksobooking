@@ -21,6 +21,11 @@ var titleValues = ['Большая уютная квартира',
 var typeValues = ['flat', 'house', 'bungalo'];
 var checkValues = ['12:00', '13:00', '14:00'];
 var featuresValues = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
+var advertTitles = {
+  flat: 'Квартира',
+  house: 'Дом',
+  bungalo: 'Бунгало'
+};
 
 function featuresList() {
   var list = [];
@@ -82,13 +87,6 @@ function advertAssembling(advertElement, advertNumber) {
 
   advertElement.querySelector('h3').textContent = advertNumber.offer.title;
   advertElement.querySelector('.popup__price').innerHTML = advertNumber.offer.price + '&#x20bd;/ночь';
-
-
-  var advertTitles = {
-    flat: 'Квартира',
-    house: 'Дом',
-    bungalo: 'Бунгало'
-  };
 
   advertElement.querySelector('h4').textContent = advertTitles[advertNumber.offer.type];
 
