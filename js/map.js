@@ -110,7 +110,7 @@ var renderFeatures = function (features, element) {
 };
 
 // заполнение карточки объявления ==================================================
-function advertAssembling(advertElement, advert) {
+function renderAdvert(advertElement, advert) {
   var offer = advert.offer;
 
   advertElement.querySelector('h3').textContent = offer.title;
@@ -195,7 +195,7 @@ document.querySelector('.map__pin--main').addEventListener('click', function () 
       // ставим флаг активности у текущего
       // рисуем попап, то есть карточку объявления
       this.classList.add('map__pin--active');
-      advertAssembling(document.querySelector('.popup'), adverts[this.value]);
+      renderAdvert(document.querySelector('.popup'), adverts[this.value]);
     });
 
   }
