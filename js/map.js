@@ -1,4 +1,5 @@
 'use strict';
+var ESC_KEYCODE = 27;
 
 function random(x, y) {
   if (typeof (y) === 'undefined') {
@@ -115,14 +116,19 @@ function advertAssembling(advertElement, advertNumber) {
 
 // ================>>>>>>
 document.querySelector('.map').insertBefore(document.querySelector('template').content.querySelector('article').cloneNode(true), document.querySelector('.map__filters-container'));
-// закрытие карточки объявления по крестику
-document.querySelector('.popup').querySelector('.popup__close').addEventListener('click', function () {
+// закрытие карточки объявления 
+function closePopup() {
   document.querySelector('.popup').classList.add('hidden');
   document.querySelector('.map__pin--active').classList.remove('map__pin--active');
+}
+document.querySelector('.popup').querySelector('.popup__close').addEventListener('click', closePopup);
+document.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === ESC_KEYCODE && document.querySelector('.map__pin--active') !== null) {
+    closePopup();
+  }
 });
 
 document.querySelector('.popup').classList.add('hidden');
-// ===============================
 
 // делаем неактивными поля для заполнения объявления
 var fieldset = document.querySelectorAll('fieldset');
@@ -131,14 +137,12 @@ for (i = 0; i < fieldset.length; i++) {
 }
 
 // ======================что делает клик по КРАСНОЙ метке
-var mainLabel = document.querySelector('.map__pin--main');
-mainLabel.addEventListener('click', function () {
-  // убираем затемнение
-  document.querySelector('.map').classList.remove('map--faded');
-
-  // и рисуем метки
+document.querySelector('.map__pin--main').addEventListener('click', function () {
   var OFFSET_X = 20;
   var OFFSET_Y = 58;
+  // убираем затемнение
+  document.querySelector('.map').classList.remove('map--faded');
+  // и рисуем пины
   var similarLabelTemplate = document.querySelector('template').content.querySelector('.map__pin');
   var renderAdvert = function (advert) {
     var advertLabel = similarLabelTemplate.cloneNode(true);
@@ -149,29 +153,25 @@ mainLabel.addEventListener('click', function () {
     advertLabelImage.width = '40';
     advertLabelImage.height = '40';
     advertLabelImage.draggable = 'false';
-
     return advertLabel;
   };
-
 
   var fragment = document.createDocumentFragment();
   for (i = 0; i < adverts.length; i++) {
     var advertLabel = fragment.appendChild(renderAdvert(adverts[i]));
     advertLabel.value = i;
-    advertLabel.setAttribute('tabindex', i);
+    advertLabel.setAttribute('tabindex', 0);
     advertLabel.addEventListener('click', function () {
-      // Удаляем флаг активной у предыдущей
+      // Удаляем флаг активности у предыдущего
       if (document.querySelector('.map__pin--active') !== null) {
         document.querySelector('.map__pin--active').classList.remove('map__pin--active');
       } else {
         document.querySelector('.popup').classList.remove('hidden');
       }
-      // ставим флаг активной у текущей
+      // ставим флаг активности у текущего
       // рисуем попап, то есть карточку объявления
       this.classList.add('map__pin--active');
-
       advertAssembling(document.querySelector('.popup'), adverts[this.value]);
-
     });
 
   }
