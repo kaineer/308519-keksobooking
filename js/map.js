@@ -65,33 +65,7 @@ for (var i = 0; i < 8; i++) {
   };
 }
 
-document.querySelector('.map').classList.remove('map--faded');
-
-var OFFSET_X = 20;
-var OFFSET_Y = 58;
-
-var similarLabelTemplate = document.querySelector('template').content.querySelector('.map__pin');
-
-var renderAdvert = function (advert) {
-  var advertLabel = similarLabelTemplate.cloneNode(true);
-  advertLabel.style.left = advert.offer.location.x - OFFSET_X + 'px';
-  advertLabel.style.top = advert.offer.location.y - OFFSET_Y + 'px';
-  var advertLabelImage = advertLabel.querySelector('img');
-  advertLabelImage.src = advert.author.avatar;
-  advertLabelImage.width = '40';
-  advertLabelImage.height = '40';
-  advertLabelImage.draggable = 'false';
-  return advertLabel;
-};
-
-var fragment = document.createDocumentFragment();
-for (i = 0; i < adverts.length; i++) {
-  fragment.appendChild(renderAdvert(adverts[i]));
-}
-
-document.querySelector('.map__pins').appendChild(fragment);
-
-
+// заполнение карточки объявления ==================================================
 function advertAssembling(advertElement, advertNumber) {
 
   advertElement.querySelector('h3').textContent = advertNumber.offer.title;
@@ -122,19 +96,13 @@ function advertAssembling(advertElement, advertNumber) {
 
   advertElement.querySelectorAll('p')[3].textContent = 'Заезд после ' + advertNumber.offer.checkin + ' выезд до ' + advertNumber.offer.checkout;
 
-  var flag;
-  var j;
+  advertElement.removeChild(advertElement.querySelector('.popup__features'));
+
+  advertElement.insertBefore(document.querySelector('template').content.querySelector('.popup__features').cloneNode(true), advertElement.querySelector('p')[4]);
+
+  var featuresListAll = advertElement.querySelectorAll('.popup__features');
   for (i = 0; i < featuresValues.length; i++) {
-    flag = false;
-    j = 0;
-    while (!flag && j < advertNumber.offer.features.length) {
-      if (advertNumber.offer.features[j] === featuresValues[i]) {
-        flag = true;
-      }
-      j++;
-    }
-    if (!flag) {
-      var featuresListAll = advertElement.querySelectorAll('.popup__features');
+    if (advertNumber.offer.features.indexOf(featuresValues[i]) === -1) {
       featuresListAll[0].removeChild(advertElement.querySelector('.feature--' + featuresValues[i]));
     }
   }
@@ -145,4 +113,75 @@ function advertAssembling(advertElement, advertNumber) {
   return advertElement;
 }
 
-document.querySelector('.map').insertBefore(advertAssembling(document.querySelector('template').content.cloneNode(true), adverts[0]), document.querySelector('.map__filters-container'));
+// ================>>>>>>
+document.querySelector('.map').insertBefore(document.querySelector('template').content.querySelector('article').cloneNode(true), document.querySelector('.map__filters-container'));
+// закрытие карточки объявления по крестику
+document.querySelector('.popup').querySelector('.popup__close').addEventListener('click', function () {
+  document.querySelector('.popup').classList.add('hidden');
+  document.querySelector('.map__pin--active').classList.remove('map__pin--active');
+});
+
+document.querySelector('.popup').classList.add('hidden');
+// ===============================
+
+// делаем неактивными поля для заполнения объявления
+var fieldset = document.querySelectorAll('fieldset');
+for (i = 0; i < fieldset.length; i++) {
+  fieldset[i].disabled = true;
+}
+
+// ======================что делает клик по КРАСНОЙ метке
+var mainLabel = document.querySelector('.map__pin--main');
+mainLabel.addEventListener('click', function () {
+  // убираем затемнение
+  document.querySelector('.map').classList.remove('map--faded');
+
+  // и рисуем метки
+  var OFFSET_X = 20;
+  var OFFSET_Y = 58;
+  var similarLabelTemplate = document.querySelector('template').content.querySelector('.map__pin');
+  var renderAdvert = function (advert) {
+    var advertLabel = similarLabelTemplate.cloneNode(true);
+    advertLabel.style.left = advert.offer.location.x - OFFSET_X + 'px';
+    advertLabel.style.top = advert.offer.location.y - OFFSET_Y + 'px';
+    var advertLabelImage = advertLabel.querySelector('img');
+    advertLabelImage.src = advert.author.avatar;
+    advertLabelImage.width = '40';
+    advertLabelImage.height = '40';
+    advertLabelImage.draggable = 'false';
+
+    return advertLabel;
+  };
+
+
+  var fragment = document.createDocumentFragment();
+  for (i = 0; i < adverts.length; i++) {
+    var advertLabel = fragment.appendChild(renderAdvert(adverts[i]));
+    advertLabel.value = i;
+    advertLabel.setAttribute('tabindex', i);
+    advertLabel.addEventListener('click', function () {
+      // Удаляем флаг активной у предыдущей
+      if (document.querySelector('.map__pin--active') !== null) {
+        document.querySelector('.map__pin--active').classList.remove('map__pin--active');
+      } else {
+        document.querySelector('.popup').classList.remove('hidden');
+      }
+      // ставим флаг активной у текущей
+      // рисуем попап, то есть карточку объявления
+      this.classList.add('map__pin--active');
+
+      advertAssembling(document.querySelector('.popup'), adverts[this.value]);
+
+    });
+
+  }
+
+  document.querySelector('.map__pins').appendChild(fragment);
+
+  // делаем активными поля для заполнения объявления
+  for (i = 0; i < fieldset.length; i++) {
+    fieldset[i].disabled = false;
+  }
+
+}); // конец =========== что делает клик по КРАСНОЙ метке
+
