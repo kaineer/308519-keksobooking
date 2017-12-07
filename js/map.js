@@ -165,13 +165,13 @@ var fieldsets = {
   nodes: document.querySelectorAll('fieldset'),
 
   disable: function () {
-    for (var i = 0; i < this.nodes; i++) {
+    for (var i = 0; i < this.nodes.length; i++) {
       this.nodes[i].disabled = true;
     }
   },
 
   enable: function () {
-    for (var i = 0; i < this.nodes; i++) {
+    for (var i = 0; i < this.nodes.length; i++) {
       this.nodes[i].disabled = false;
     }
   }
