@@ -97,33 +97,33 @@ var renderFeatures = function (features, element) {
 };
 
 // заполнение карточки объявления ==================================================
-function advertAssembling(advertElement, advertNumber) {
+function advertAssembling(advertElement, advert) {
 
-  advertElement.querySelector('h3').textContent = advertNumber.offer.title;
-  advertElement.querySelector('.popup__price').innerHTML = advertNumber.offer.price + '&#x20bd;/ночь';
+  advertElement.querySelector('h3').textContent = advert.offer.title;
+  advertElement.querySelector('.popup__price').innerHTML = advert.offer.price + '&#x20bd;/ночь';
 
-  advertElement.querySelector('h4').textContent = advertTitles[advertNumber.offer.type];
+  advertElement.querySelector('h4').textContent = advertTitles[advert.offer.type];
 
   var form = ' комнаты ';
-  if (advertNumber.offer.rooms === 1) {
+  if (advert.offer.rooms === 1) {
     form = ' комната ';
   }
-  if (advertNumber.offer.rooms === 5) {
+  if (advert.offer.rooms === 5) {
     form = ' комнат ';
   }
 
-  if (advertNumber.offer.guests > 1) {
-    advertElement.querySelectorAll('p')[2].textContent = advertNumber.offer.rooms + form + ' для ' + advertNumber.offer.guests + ' гостей';
+  if (advert.offer.guests > 1) {
+    advertElement.querySelectorAll('p')[2].textContent = advert.offer.rooms + form + ' для ' + advert.offer.guests + ' гостей';
   } else {
-    advertElement.querySelectorAll('p')[2].textContent = advertNumber.offer.rooms + form + ' для ' + advertNumber.offer.guests + ' гостя';
+    advertElement.querySelectorAll('p')[2].textContent = advert.offer.rooms + form + ' для ' + advert.offer.guests + ' гостя';
   }
 
-  advertElement.querySelectorAll('p')[3].textContent = 'Заезд после ' + advertNumber.offer.checkin + ' выезд до ' + advertNumber.offer.checkout;
+  advertElement.querySelectorAll('p')[3].textContent = 'Заезд после ' + advert.offer.checkin + ' выезд до ' + advert.offer.checkout;
 
-  renderFeatures(advertNumber.offer.features, advertElement.querySelector('.popup__features'));
+  renderFeatures(advert.offer.features, advertElement.querySelector('.popup__features'));
 
-  advertElement.querySelectorAll('p')[4].textContent = advertNumber.offer.description;
-  advertElement.querySelector('.popup__avatar').src = advertNumber.author.avatar;
+  advertElement.querySelectorAll('p')[4].textContent = advert.offer.description;
+  advertElement.querySelector('.popup__avatar').src = advert.author.avatar;
 
   return advertElement;
 }
@@ -168,7 +168,6 @@ document.querySelector('.map__pin--main').addEventListener('click', function () 
     advertLabelImage.height = '40';
     advertLabelImage.draggable = 'false';
     return advertLabel;
-
   };
 
   var fragment = document.createDocumentFragment();
