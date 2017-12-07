@@ -140,26 +140,34 @@ function renderAdvert(advertElement, advert) {
   return advertElement;
 }
 
-// ================>>>>>>
-// закрытие карточки объявления
-function closePopup() {
-  document.querySelector('.popup').classList.add('hidden');
-  document.querySelector('.map__pin--active').classList.remove('map__pin--active');
-}
-document.querySelector('.popup').querySelector('.popup__close').addEventListener('click', closePopup);
-document.addEventListener('keydown', function (evt) {
-  if (evt.keyCode === ESC_KEYCODE && document.querySelector('.map__pin--active') !== null) {
-    closePopup();
+var initPopup = function () {
+  document.querySelector('.map').insertBefore(
+      document.querySelector('template').content.querySelector('article').cloneNode(true),
+      document.querySelector('.map__filters-container')
+  );
+
+  // закрытие карточки объявления
+  function closePopup() {
+    document.querySelector('.popup').classList.add('hidden');
+    document.querySelector('.map__pin--active').classList.remove('map__pin--active');
   }
-});
+  document.querySelector('.popup').querySelector('.popup__close').addEventListener('click', closePopup);
+  document.addEventListener('keydown', function (evt) {
+    if (evt.keyCode === ESC_KEYCODE && document.querySelector('.map__pin--active') !== null) {
+      closePopup();
+    }
+  });
 
-document.querySelector('.popup').classList.add('hidden');
+  document.querySelector('.popup').classList.add('hidden');
+};
 
-// делаем неактивными поля для заполнения объявления
-var fieldset = document.querySelectorAll('fieldset');
-for (i = 0; i < fieldset.length; i++) {
-  fieldset[i].disabled = true;
-}
+var disableFieldsets = function () {
+  // делаем неактивными поля для заполнения объявления
+  var fieldset = document.querySelectorAll('fieldset');
+  for (i = 0; i < fieldset.length; i++) {
+    fieldset[i].disabled = true;
+  }
+};
 
 // ======================что делает клик по КРАСНОЙ метке
 document.querySelector('.map__pin--main').addEventListener('click', function () {
@@ -212,7 +220,8 @@ document.querySelector('.map__pin--main').addEventListener('click', function () 
 
 var initMap = function () {
   generateAdverts();
-
+  initPopup();
+  disableFieldsets();
 };
 
 initMap();
