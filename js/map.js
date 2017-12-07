@@ -82,6 +82,20 @@ for (var i = 0; i < 8; i++) {
   adverts.push(generateAdvert());
 }
 
+var renderFeatures = function (features, element) {
+  var featuresFragment = document.createDocumentFragment();
+  element.innerHTML = '';
+
+  features.forEach(function (feature) {
+    var span = document.createElement('li');
+    span.classList.add('feature');
+    span.classList.add('feature--' + feature);
+    featuresFragment.appendChild(span);
+  });
+
+  element.appendChild(featuresFragment);
+};
+
 // заполнение карточки объявления ==================================================
 function advertAssembling(advertElement, advertNumber) {
 
@@ -106,16 +120,7 @@ function advertAssembling(advertElement, advertNumber) {
 
   advertElement.querySelectorAll('p')[3].textContent = 'Заезд после ' + advertNumber.offer.checkin + ' выезд до ' + advertNumber.offer.checkout;
 
-  advertElement.removeChild(advertElement.querySelector('.popup__features'));
-
-  advertElement.insertBefore(document.querySelector('template').content.querySelector('.popup__features').cloneNode(true), advertElement.querySelector('p')[4]);
-
-  var featuresListAll = advertElement.querySelectorAll('.popup__features');
-  for (i = 0; i < featuresValues.length; i++) {
-    if (advertNumber.offer.features.indexOf(featuresValues[i]) === -1) {
-      featuresListAll[0].removeChild(advertElement.querySelector('.feature--' + featuresValues[i]));
-    }
-  }
+  renderFeatures(advertNumber.offer.features, advertElement.querySelector('.popup__features'));
 
   advertElement.querySelectorAll('p')[4].textContent = advertNumber.offer.description;
   advertElement.querySelector('.popup__avatar').src = advertNumber.author.avatar;
