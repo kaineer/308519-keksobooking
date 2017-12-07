@@ -36,19 +36,26 @@ function featuresList() {
   return list;
 }
 
+var generateLocation = function () {
+  return {
+    x: random(300, 900),
+    y: random(100, 500)
+  };
+};
+
 var adverts = [];
-var locationX;
-var locationY;
+var location;
+
 for (var i = 0; i < 8; i++) {
-  locationX = random(300, 900);
-  locationY = random(100, 500);
+  location = generateLocation();
+
   adverts[i] = {
     'author': {
       'avatar': 'img/avatars/user' + avatarValues.splice(random(avatarValues.length - 1), 1) + '.png'
     },
     'offer': {
       'title': titleValues.splice(random(titleValues.length - 1), 1),
-      'address': locationX + ', ' + locationY,
+      'address': location.x + ', ' + location.y,
       'price': random(1000, 1000000),
       'type': typeValues[random(2)],
       'rooms': random(4) + 1,
@@ -58,10 +65,7 @@ for (var i = 0; i < 8; i++) {
       'features': featuresList(),
       'description': '',
       'photos': [],
-      'location': {
-        'x': locationX,
-        'y': locationY
-      }
+      'location': location
     }
   };
 }
@@ -116,7 +120,7 @@ function advertAssembling(advertElement, advertNumber) {
 
 // ================>>>>>>
 document.querySelector('.map').insertBefore(document.querySelector('template').content.querySelector('article').cloneNode(true), document.querySelector('.map__filters-container'));
-// закрытие карточки объявления 
+// закрытие карточки объявления
 function closePopup() {
   document.querySelector('.popup').classList.add('hidden');
   document.querySelector('.map__pin--active').classList.remove('map__pin--active');
@@ -154,6 +158,7 @@ document.querySelector('.map__pin--main').addEventListener('click', function () 
     advertLabelImage.height = '40';
     advertLabelImage.draggable = 'false';
     return advertLabel;
+
   };
 
   var fragment = document.createDocumentFragment();
