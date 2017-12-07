@@ -161,69 +161,84 @@ var initPopup = function () {
   document.querySelector('.popup').classList.add('hidden');
 };
 
-var disableFieldsets = function () {
-  // делаем неактивными поля для заполнения объявления
-  var fieldset = document.querySelectorAll('fieldset');
-  for (var i = 0; i < fieldset.length; i++) {
-    fieldset[i].disabled = true;
+var fieldsets = {
+  nodes: document.querySelectorAll('fieldset'),
+
+  disable: function () {
+    for (var i = 0; i < this.nodes; i++) {
+      this.nodes[i].disabled = true;
+    }
+  },
+
+  enable: function () {
+    for (var i = 0; i < this.nodes; i++) {
+      this.nodes[i].disabled = false;
+    }
   }
 };
 
-// ======================что делает клик по КРАСНОЙ метке
-document.querySelector('.map__pin--main').addEventListener('click', function () {
-  var i;
+var OFFSET_X = 20;
+var OFFSET_Y = 58;
 
-  var OFFSET_X = 20;
-  var OFFSET_Y = 58;
+var similarLabelTemplate = document.querySelector('template').content.querySelector('.map__pin');
+// рисуем пины
+var renderPin = function (advert) {
+  var advertLabel = similarLabelTemplate.cloneNode(true);
+  advertLabel.style.left = advert.offer.location.x - OFFSET_X + 'px';
+  advertLabel.style.top = advert.offer.location.y - OFFSET_Y + 'px';
+  var advertLabelImage = advertLabel.querySelector('img');
+  advertLabelImage.src = advert.author.avatar;
+  advertLabelImage.width = '40';
+  advertLabelImage.height = '40';
+  advertLabelImage.draggable = 'false';
+  return advertLabel;
+};
+
+var onPinClick = function (event) {
+  var popup = document.querySelector('.popup');
+  var activePin = document.querySelector('.map__pin--active');
+  var pin = event.target.closest('.map__pin');
+
+  if (activePin !== null) {
+    activePin.classList.remove('map__pin--active');
+  } else {
+    popup.classList.remove('hidden');
+  }
+
+  pin.classList.add('map__pin--active');
+  renderAdvert(popup, adverts[pin.dataset.value]);
+};
+
+var renderPins = function () {
+  var fragment = document.createDocumentFragment();
+  for (var i = 0; i < adverts.length; i++) {
+    var pin = renderPin(adverts[i]);
+    pin.dataset.value = i;
+    pin.setAttribute('tabindex', 0);
+    pin.addEventListener('click', onPinClick);
+    fragment.appendChild(pin);
+  }
+  document.querySelector('.map__pins').appendChild(fragment);
+};
+
+var onMainPinClick = function () {
   // убираем затемнение
   document.querySelector('.map').classList.remove('map--faded');
-  // и рисуем пины
-  var similarLabelTemplate = document.querySelector('template').content.querySelector('.map__pin');
-  var renderPin = function (advert) {
-    var advertLabel = similarLabelTemplate.cloneNode(true);
-    advertLabel.style.left = advert.offer.location.x - OFFSET_X + 'px';
-    advertLabel.style.top = advert.offer.location.y - OFFSET_Y + 'px';
-    var advertLabelImage = advertLabel.querySelector('img');
-    advertLabelImage.src = advert.author.avatar;
-    advertLabelImage.width = '40';
-    advertLabelImage.height = '40';
-    advertLabelImage.draggable = 'false';
-    return advertLabel;
-  };
 
-  var fragment = document.createDocumentFragment();
-  for (i = 0; i < adverts.length; i++) {
-    var advertLabel = fragment.appendChild(renderPin(adverts[i]));
-    advertLabel.value = i;
-    advertLabel.setAttribute('tabindex', 0);
-    advertLabel.addEventListener('click', function () {
-      // Удаляем флаг активности у предыдущего
-      if (document.querySelector('.map__pin--active') !== null) {
-        document.querySelector('.map__pin--active').classList.remove('map__pin--active');
-      } else {
-        document.querySelector('.popup').classList.remove('hidden');
-      }
-      // ставим флаг активности у текущего
-      // рисуем попап, то есть карточку объявления
-      this.classList.add('map__pin--active');
-      renderAdvert(document.querySelector('.popup'), adverts[this.value]);
-    });
+  renderPins();
 
-  }
+  fieldsets.enable();
+};
 
-  document.querySelector('.map__pins').appendChild(fragment);
-
-  // делаем активными поля для заполнения объявления
-  for (i = 0; i < fieldset.length; i++) {
-    fieldset[i].disabled = false;
-  }
-
-}); // конец =========== что делает клик по КРАСНОЙ метке
+var initMainPin = function () {
+  document.querySelector('.map__pin--main').addEventListener('click', onMainPinClick);
+};
 
 var initMap = function () {
   generateAdverts();
   initPopup();
-  disableFieldsets();
+  fieldsets.disable();
+  initMainPin();
 };
 
 initMap();
