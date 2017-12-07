@@ -9,6 +9,19 @@ function random(x, y) {
   }
 }
 
+function pluralize(form1, form2, form5, number) {
+  var units = number % 10;
+  var tens = Math.floor(number / 10);
+
+  if (tens === 1 || units > 4) {
+    return form5;
+  } else if (units === 1) {
+    return form1;
+  } else {
+    return form2;
+  }
+};
+
 var avatarValues = ['01', '02', '03', '04', '05', '06', '07', '08'];
 var titleValues = ['Большая уютная квартира',
   'Маленькая неуютная квартира',
@@ -98,32 +111,29 @@ var renderFeatures = function (features, element) {
 
 // заполнение карточки объявления ==================================================
 function advertAssembling(advertElement, advert) {
+  var offer = advert.offer;
 
-  advertElement.querySelector('h3').textContent = advert.offer.title;
-  advertElement.querySelector('.popup__price').innerHTML = advert.offer.price + '&#x20bd;/ночь';
+  advertElement.querySelector('h3').textContent = offer.title;
+  advertElement.querySelector('.popup__price').innerHTML = offer.price + '&#x20bd;/ночь';
 
-  advertElement.querySelector('h4').textContent = advertTitles[advert.offer.type];
+  advertElement.querySelector('h4').textContent = advertTitles[offer.type];
 
-  var form = ' комнаты ';
-  if (advert.offer.rooms === 1) {
-    form = ' комната ';
-  }
-  if (advert.offer.rooms === 5) {
-    form = ' комнат ';
-  }
+  var para = advertElement.querySelectorAll('p');
 
-  if (advert.offer.guests > 1) {
-    advertElement.querySelectorAll('p')[2].textContent = advert.offer.rooms + form + ' для ' + advert.offer.guests + ' гостей';
-  } else {
-    advertElement.querySelectorAll('p')[2].textContent = advert.offer.rooms + form + ' для ' + advert.offer.guests + ' гостя';
-  }
+  para[2].textContent = (
+    offer.rooms + ' ' + pluralize('комната', 'комнаты', 'комнат', offer.rooms) +
+    ' для ' + offer.guests + ' ' + pluralize('гостя', 'гостей', 'гостей', offer.guests)
+  );
 
-  advertElement.querySelectorAll('p')[3].textContent = 'Заезд после ' + advert.offer.checkin + ' выезд до ' + advert.offer.checkout;
+  para[3].textContent = (
+    'Заезд после ' + offer.checkin + ' выезд до ' + offer.checkout
+  );
 
-  renderFeatures(advert.offer.features, advertElement.querySelector('.popup__features'));
+  para[4].textContent = offer.description;
 
-  advertElement.querySelectorAll('p')[4].textContent = advert.offer.description;
-  advertElement.querySelector('.popup__avatar').src = advert.author.avatar;
+  renderFeatures(offer.features, advertElement.querySelector('.popup__features'));
+
+  advertElement.querySelector('.popup__avatar').src = author.avatar;
 
   return advertElement;
 }
